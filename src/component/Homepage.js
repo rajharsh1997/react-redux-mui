@@ -1,84 +1,107 @@
 import React, {useState, useEffect} from 'react';
 import Grid from '@material-ui/core/Grid';
-import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
-import axios from 'axios';
 import './Homepage.css';
+import {fetchUsers} from '../redux'
+import {connect} from 'react-redux'
 
-function Homepage(props) {
-    // const [posts,setPosts] = useState([]);
-    // Single post instead of array of post
-    const [post,setPost] = useState({});
-    const [id,setId] = useState(1);
+const useStyles = makeStyles({
+    root: {
+      miWidth: 275,
+      margin: '18px 0px 20px 500px'
+    },
+    text:{
+        margin: '0 0 10px 100px',
+        width: '300px'
+    },
+    but:{
+        margin: '24px 0 14px 14px'
+    }
+  });
+
+function Homepage({ userData, fetchUsers}) {
+    const classes = useStyles();
+    const [id,setId] = useState();
     const [idFromButtonClick,setIdFromButtonClick] = useState(1);
-
+    const [iniApi,setIniApi] = useState(`https://60596cd9b11aba001745c1ce.mockapi.io/api/v1/users`)
+    
     const handleClick = () => {
-        setIdFromButtonClick(id)        
-    } 
-
+        setIdFromButtonClick(id)
+       setIniApi(`https://60596cd9b11aba001745c1ce.mockapi.io/api/v1/users`+`/${id}`)        
+    }
+    
     useEffect(()=>{
-        axios.get(`https://60596cd9b11aba001745c1ce.mockapi.io/api/v1/users/${id}`)
-        .then( res => {
-            console.log(res)
-            setPost(res.data)
-        })
-        .catch(err =>{
-            console.log(err)
-        })
+        fetchUsers(iniApi)
+        
     }, [idFromButtonClick])
+    
     return (
         <div>
-            <Typography>Enter the Employee Id</Typography>
-            <TextField type="text" value={id} onChange={ e => setId(e.target.value)}/>
+            <TextField
+                className = {classes.root}
+                label="Enter the employee ID" 
+                type="text" 
+                value={id}
+                inputProps={{min: 0, style: { textAlign: 'center' }}}
+                variant="outlined"
+                onChange={ e => setId(e.target.value)}
+                />
             <Button 
+                className = {classes.but}
                 type="button"
                 variant="contained"
                 color="primary" 
-                onClick={handleClick}> Fetch User
+                onClick={handleClick}> Fetch Details
             </Button>
-            <Grid container spacing={4}>
+            <Grid container spacing={2}>
                 <Grid item xs={6}>
                     <TextField 
-                        value={post.country || ''} 
+                        className = {classes.text}
+                        value={userData.users.country || ''} 
                         id="outlined-basic" 
                         label="Country" 
                         variant="outlined" 
                         name="country"
-                        //style = {{width: 700}}
+                        fullwidth="true"
+                        style = {{width: 400}}
                         />
                 </Grid>
                 <Grid item xs={6}>
                     <TextField 
-                        value={post.city || ''} 
+                        className = {classes.text}
+                        value={userData.users.city || ''} 
                         id="outlined-basic" 
                         label="City" 
                         variant="outlined" 
                         name="city"
-                        //style = {{width: 700}}
+                        fullwidth="true"
+                        style = {{width: 400}}
                         />
                 </Grid>
             </Grid>
-            <Grid container spacing={4}>
+            <Grid container spacing={2}>
             <Grid item xs={6}>
                     <TextField 
-                        value={post.name || ''} 
+                        className = {classes.text}
+                        value={userData.users.name || ''} 
                         id="outlined-basic" 
                         label="Name" 
                         variant="outlined" 
                         name="name"
-                        //style = {{width: 700}}
+                        style = {{width: 400}}
                         />
                 </Grid>
                 <Grid item xs={6}>
                     <TextField 
-                        value={post.description || ''} 
+                        className = {classes.text}
+                        value={userData.users.description || ''} 
                         id="outlined-basic" 
-                        label="Descrption" 
+                        label="Description" 
                         variant="outlined" 
                         name="description"
-                        //style = {{width: 700}}
+                        style = {{width: 400}}
                         />
                 </Grid>
             </Grid>
@@ -86,16 +109,20 @@ function Homepage(props) {
     )
 }
 
-// const mapStateToProps = state => {
-//     return {
-//         id: state.employee.id
-//     }
-// }
+const mapStateToProps = state => {
+    return {
+        userData: state.user
+    }
+}
 
-// const mapDispatchToProps = dispatch => {
-//     return {
-//         fetchEmployees: number => dispatch(buyCake(number))
-//     }
-// }
+const mapDispatchToProps = dispatch => {
+    return {
+        fetchUsers: iniApi => dispatch(fetchUsers(iniApi))
+    }
+}
 
-export default Homepage
+// export default Homepage
+export default connect (
+    mapStateToProps,
+    mapDispatchToProps
+)(Homepage)

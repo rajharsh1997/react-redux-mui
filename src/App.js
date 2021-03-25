@@ -1,5 +1,7 @@
 import React,{useState} from 'react';
 import './App.css';
+import {Provider} from 'react-redux';
+import store from './redux/store'
 import Homepage from '../src/component/Homepage';
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
@@ -33,6 +35,7 @@ function App() {
   }
 
   return (
+    <Provider store={store}>
     <ThemeProvider theme={theme}>
     <CssBaseline/>
     <div className={classes.root}>
@@ -42,12 +45,15 @@ function App() {
             EmployeeInfo
           </Typography>
           <Switch onChange={handleDarkMode} value={darkMode}/>
-          <Button color="inherit">DarkMode</Button>
+          <Typography variant="h6" >
+            Darkmode
+          </Typography>
         </Toolbar>
       </AppBar>
       <Homepage />
     </div>
     </ThemeProvider>
+    </Provider>
   );
 }
 

@@ -1,36 +1,36 @@
 import axios from 'axios'
 
 import  {
-    FETCH_EMPLOYEE_REQUEST,
-    FETCH_EMPLOYEE_SUCCESS,
-    FETCH_EMPLOYEE_FAILURE
-} from './employeeTypes.js'
+    FETCH_USERS_REQUEST,
+    FETCH_USERS_SUCCESS,
+    FETCH_USERS_FAILURE
+} from './userTypes.js'
 
 export const fetchUsersRequest = () => {
     return {
-        type: FETCH_EMPLOYEE_REQUEST
+        type: FETCH_USERS_REQUEST
     }
 }
 
 const fetchUsersSuccess = users => {
     return {
-        type: FETCH_EMPLOYEE_SUCCESS,
+        type: FETCH_USERS_SUCCESS,
         payload: users
     }
 }
 
 const fetchUsersFailure = error => {
     return {
-        type: FETCH_EMPLOYEE_FAILURE,
+        type: FETCH_USERS_FAILURE,
         payload: error
     }
 }
 
-export const fetchUsers = () => {
+export const fetchUsers = (iniApi=1) => {
     return (dispatch) => {
         dispatch(fetchUsersRequest)
         //Above will set loading to true
-        axios.get('https://jsonplaceholder.typicode.com/users')
+        axios.get(iniApi)
         .then(response =>{
             const users = response.data
             dispatch(fetchUsersSuccess(users))
